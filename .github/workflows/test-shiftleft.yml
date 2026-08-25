@@ -1,0 +1,40 @@
+name: Test Shift Left API Plugin
+
+on:
+  workflow_dispatch:
+
+jobs:
+  shiftleft-api-test:
+    name: Run Shift Left API Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Total Shift Left API Tests
+        id: shiftleft
+        uses: Total-Shift-Left/Shift-Left-API-Integrations/github-actions@main
+        with:
+          server-url: ${{ secrets.SHIFTLEFT_SERVER_URL }}
+          api-email: ${{ secrets.SHIFTLEFT_API_EMAIL }}
+          api-password: ${{ secrets.SHIFTLEFT_API_PASSWORD }}
+          pack-id: ${{ secrets.SHIFTLEFT_PACK_ID }}
+
+      - name: Display Shift Left results
+        if: always()
+        run: |
+          echo "Execution ID: ${{ steps.shiftleft.outputs.execution_id }}"
+          echo "Decision: ${{ steps.shiftleft.outputs.decision }}"
+          echo "Success Rate: ${{ steps.shiftleft.outputs.success_rate }}"
+          echo "Passed: ${{ steps.shiftleft.outputs.passed }}"
+          echo "Task Completion: ${{ steps.shiftleft.outputs.task_completion }}"
+
+      - name: Upload Shift Left results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: shiftleft-api-results
+          path: |
+            shiftleft-test-pack-summary.json
+            shiftleft-test-pack-results.xml
