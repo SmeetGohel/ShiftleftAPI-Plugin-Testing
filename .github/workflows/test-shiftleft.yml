@@ -20,8 +20,8 @@ jobs:
       - name: Run the test pack
         run: node sls-runner.js --url "$SLS_URL" --token "$SLS_TOKEN" --pack "$SLS_PACK" --junit results.xml --min-pass-rate 0.9
         env:
-          SLS_URL: "https://app.totalshiftleft.ai"
-          SLS_PACK: "c0f58991-b768-4e78-9e2f-6c6b26378542"
+          SLS_URL: "https://localhost:5001"
+          SLS_PACK: "96694579-0698-46ca-b6ba-633c687b7b76"
           SLS_TOKEN: ${{ secrets.SLS_TOKEN }}
       - uses: actions/upload-artifact@v4
         if: always()
