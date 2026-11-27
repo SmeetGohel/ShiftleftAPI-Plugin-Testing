@@ -12,11 +12,16 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
+      - name: Download the runner and check it
+        run: curl --fail --silent --show-error --location --proto "=https" --output sls-runner.js "$SLS_RUNNER_URL" || { echo "The runner file could not be downloaded, so the build stops here." >&2; exit 1; } && echo "$SLS_RUNNER_SHA256  sls-runner.js" | sha256sum --check --strict - || { echo "The runner file does not match its SHA-256 checksum, so it was not run." >&2; exit 1; }
+        env:
+          SLS_RUNNER_URL: "https://totalshiftleft.blob.core.windows.net/engine-staging/2.0.96.278/sls-runner-2.0.96.278.js"
+          SLS_RUNNER_SHA256: "1bae5ac2b41bb56667c21028d9b90d1559fb56cd8a6d09324c9316bdd858185f"
       - name: Run the test pack
-        run: node backend/scripts/run-pack-cli.js --url "$SLS_URL" --token "$SLS_TOKEN" --pack "$SLS_PACK" --junit results.xml --min-pass-rate 0.9
+        run: node sls-runner.js --url "$SLS_URL" --token "$SLS_TOKEN" --pack "$SLS_PACK" --junit results.xml --min-pass-rate 0.9
         env:
           SLS_URL: "https://app.totalshiftleft.ai"
-          SLS_PACK: "60774ede-0b64-4355-a371-5083111bd776"
+          SLS_PACK: "96694579-0698-46ca-b6ba-633c687b7b76"
           SLS_TOKEN: ${{ secrets.SLS_TOKEN }}
       - uses: actions/upload-artifact@v4
         if: always()
